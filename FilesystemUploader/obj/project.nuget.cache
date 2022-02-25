@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "iGsrvzJ6hg0wHHEhIs4OmERRUS+/28NKhdJS6nJ23GN+hIeeck6/iLs3mKUxqN88bHI4HZpeH2BLwzJtkUmjUw==",
+  "success": true,
+  "projectFilePath": "E:\\prosjekter\\SINTEF\\DWC\\FilesystemUploader\\FilesystemUploader\\FilesystemUploader.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\crono\\.nuget\\packages\\microsoft.extensions.fileproviders.abstractions\\6.0.0\\microsoft.extensions.fileproviders.abstractions.6.0.0.nupkg.sha512",
+    "C:\\Users\\crono\\.nuget\\packages\\microsoft.extensions.fileproviders.physical\\6.0.0\\microsoft.extensions.fileproviders.physical.6.0.0.nupkg.sha512",
+    "C:\\Users\\crono\\.nuget\\packages\\microsoft.extensions.filesystemglobbing\\6.0.0\\microsoft.extensions.filesystemglobbing.6.0.0.nupkg.sha512",
+    "C:\\Users\\crono\\.nuget\\packages\\microsoft.extensions.primitives\\6.0.0\\microsoft.extensions.primitives.6.0.0.nupkg.sha512",
+    "C:\\Users\\crono\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
+    "C:\\Users\\crono\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
