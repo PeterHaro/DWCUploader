@@ -18,8 +18,10 @@ public class UploadManager
     private PhysicalFileProvider? _fileProvider;
     private IChangeToken? _fileChangeToken;
     private bool _isRunning = false;
+    private Uploader _uploader = null;
+    private Transformer _transformer = new Transformer();
 
-    public UploadManager(string directoryToWatch = "./", string watchFilter = "**/*.*")
+    public UploadManager(string directoryToWatch = "./", string watchFilter = "**/*.*", string remoteFiwareEndpoint = "", string fiwareAuthToken="")
     {
         _directoryToWatch = directoryToWatch;
         _watchFilter = watchFilter;
@@ -36,8 +38,39 @@ public class UploadManager
             Environment.Exit(0);
         };
         DeserializeManagerState();
+
+        if (!string.IsNullOrEmpty(remoteFiwareEndpoint) && !string.IsNullOrEmpty(fiwareAuthToken))
+        {
+            Console.WriteLine("Uploader should be intialized");
+            _uploader = new Uploader(remoteFiwareEndpoint, fiwareAuthToken);
+        }
     }
 
+    public async Task TestConnectionToFiware()
+    {
+        if (_uploader == null)
+        {
+            Console.WriteLine("The uploader has not been initalized correctly. Aborting");
+            return;
+        }
+        await _uploader.PerformGetRequest();
+        Console.WriteLine("Done");
+    }
+
+    public async Task TestPostWaterObserved()
+    {
+        if (_uploader == null)
+        {
+            Console.WriteLine("The uploader has not been initalized correctly. Aborting");
+            return;
+        }
+        
+        // Select random water observed file (this is just for testing)
+        var jsonRequest = _transformer.TransformToWaterObservedInMemory("./files/EDEN.csv");
+        await _uploader.PerformPostRequest(jsonRequest);
+        Console.WriteLine("Done");
+    }
+    
     public void BeginTheWatch()
     {
         _isRunning = true;
@@ -87,7 +120,7 @@ public class UploadManager
         return retval;
     }
     
-    private void WatchForFileChanges()
+    private async Task WatchForFileChanges()
     {
         IEnumerable<string> files = Directory.EnumerateFiles(_directoryToWatch, "*.*", SearchOption.AllDirectories);
         foreach (string file in files)
@@ -105,6 +138,10 @@ public class UploadManager
                 if (File.Exists(file)) // New file added to system. I.E should post
                 {
                     Console.WriteLine($"Detected a new file {file}");
+                    if (_uploader != null)
+                    {
+                        await _uploader.PerformPostRequest(_transformer.TransformToWaterObservedInMemory(file));
+                    }
                     _files.TryAdd(file, File.GetLastWriteTime(file));
                 }
             }

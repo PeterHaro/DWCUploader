@@ -244,11 +244,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\prosjekter\\SINTEF\\DWC\\FilesystemUploader\\FilesystemUploader\\FilesystemUploader.csproj",
+      "projectUniqueName": "D:\\prosjekter\\SINTEF\\DWC\\FilesystemUploader\\FilesystemUploader\\FilesystemUploader.csproj",
       "projectName": "FilesystemUploader",
-      "projectPath": "E:\\prosjekter\\SINTEF\\DWC\\FilesystemUploader\\FilesystemUploader\\FilesystemUploader.csproj",
+      "projectPath": "D:\\prosjekter\\SINTEF\\DWC\\FilesystemUploader\\FilesystemUploader\\FilesystemUploader.csproj",
       "packagesPath": "C:\\Users\\crono\\.nuget\\packages\\",
-      "outputPath": "E:\\prosjekter\\SINTEF\\DWC\\FilesystemUploader\\FilesystemUploader\\obj\\",
+      "outputPath": "D:\\prosjekter\\SINTEF\\DWC\\FilesystemUploader\\FilesystemUploader\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\crono\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -301,7 +301,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.201\\RuntimeIdentifierGraph.json"
       }
     }
   }

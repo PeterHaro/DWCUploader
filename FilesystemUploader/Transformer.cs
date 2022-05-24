@@ -1,13 +1,9 @@
-﻿using System.ComponentModel;
-using System.Globalization;
-using System.Runtime.InteropServices;
+﻿using System.Globalization;
 using System.Text.Json;
 using FilesystemUploader.Models;
 using FilesystemUploader.Models.Generic;
 using FilesystemUploader.Models.Input;
 using Microsoft.VisualBasic.FileIO;
-using Newtonsoft.Json;
-using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 
 namespace FilesystemUploader;
 
@@ -15,7 +11,7 @@ public class Transformer
 {
     private const string WaterObserved = "WaterObserved";
     private const string UrlToEden = nameof(UrlToEden);
-    
+
     public Transformer()
     {
     }
@@ -24,14 +20,14 @@ public class Transformer
     {
         string inputFileName = "./files/EDEN.csv";
         string outputFolder = "./files/payloads/WaterObserved";
-        System.IO.Directory.CreateDirectory(outputFolder);
+        Directory.CreateDirectory(outputFolder);
         TransformToWaterObserved(inputFileName, outputFolder);
 
         string alertFile = "./files/Alert_test.json";
         outputFolder = "./files/payloads/WaterQualityObserved";
-        System.IO.Directory.CreateDirectory(outputFolder);
+        Directory.CreateDirectory(outputFolder);
         string gmtTimeZone = "GMT+2";
-        
+
         //TODO: IF FOLDER PATHS DOES NOT EXIST, CREATE
         TransformToWaterQualityObserved(alertFile, outputFolder, gmtTimeZone);
     }
@@ -53,7 +49,7 @@ public class Transformer
 
             string measurementType = GetMeasurementType(fields[0]);
             double measurementValue = GetMeasurementValue(fields[0]);
-                
+
             switch (measurementType)
             {
                 case "flow":
@@ -91,12 +87,74 @@ public class Transformer
                     break;
             }
         }
+
         // GENERATE JSON OUTPUT
-        var options = new JsonSerializerOptions { WriteIndented = true };
+        var options = new JsonSerializerOptions {WriteIndented = true};
         foreach (var wo in waterObservedData)
         {
-            File.WriteAllText(outputFolder + "/" + wo.Id + ".json", System.Text.Json.JsonSerializer.Serialize(wo, options)); // Make sure audun wants to do this on a wo by wo meaning
+            File.WriteAllText(outputFolder + "/" + wo.Id + ".json",
+                JsonSerializer
+                    .Serialize(wo, options)); // Make sure audun wants to do this on a wo by wo meaning
         }
+    }
+
+    public string TransformToWaterObservedInMemory(string csvInput)
+    {
+        List<WaterObserved> waterObservedData = new List<WaterObserved>();
+        using TextFieldParser parser = new TextFieldParser(csvInput);
+        parser.TextFieldType = FieldType.Delimited;
+        parser.SetDelimiters(" ");
+
+        while (!parser.EndOfData)
+        {
+            string[]? fields = parser.ReadFields();
+            double lat = Convert.ToDouble(fields[3]);
+            double lon = Convert.ToDouble(fields[4]);
+            Location location = new Location("Point", new[] {lat, lon});
+
+            string measurementType = GetMeasurementType(fields[0]);
+            double measurementValue = GetMeasurementValue(fields[0]);
+
+            switch (measurementType)
+            {
+                case "flow":
+                    waterObservedData.Add(new WaterObserved
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Type = WaterObserved,
+                        Source = UrlToEden,
+                        DateObserved = fields[2],
+                        Location = location,
+                        Flow = measurementValue
+                    });
+                    break;
+                case "height":
+                    waterObservedData.Add(new WaterObserved
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Type = WaterObserved,
+                        Source = UrlToEden,
+                        DateObserved = fields[2],
+                        Location = location,
+                        Height = measurementValue
+                    });
+                    break;
+                case "dischargeAmount":
+                    waterObservedData.Add(new WaterObserved
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Type = WaterObserved,
+                        Source = UrlToEden,
+                        DateObserved = fields[2],
+                        Location = location,
+                        DischargeAmount = measurementValue
+                    });
+                    break;
+            }
+        }
+
+        // GENERATE JSON OUTPUT
+        return JsonSerializer.Serialize<List<WaterObserved>>(waterObservedData);
     }
 
     public void TransformToWaterQualityObserved(string jsonInput, string outputFolder, string gmtTimeZone)
@@ -124,19 +182,20 @@ public class Transformer
             })
             .ToList();
 
-        var options = new JsonSerializerOptions { WriteIndented = true };
+        var options = new JsonSerializerOptions {WriteIndented = true};
         foreach (var wqo in waterQualityObserveds)
         {
-            File.WriteAllText(outputFolder + "/" + wqo.Id + ".json", System.Text.Json.JsonSerializer.Serialize(wqo, options)); // Make sure audun wants to do this on a wqo by wqo meaning
+            File.WriteAllText(outputFolder + "/" + wqo.Id + ".json",
+                JsonSerializer.Serialize(wqo,
+                    options)); // Make sure audun wants to do this on a wqo by wqo meaning
             Console.WriteLine($"Writing file with name: {outputFolder + "/" + wqo.Id + ".json"}");
         }
-        
     }
-    
-    public static DateTime UnixTimeStampToDateTime( double unixTimeStamp )
+
+    public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
     {
         DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-        dateTime = dateTime.AddSeconds( unixTimeStamp ).ToLocalTime();
+        dateTime = dateTime.AddSeconds(unixTimeStamp).ToLocalTime();
         return dateTime;
     }
 

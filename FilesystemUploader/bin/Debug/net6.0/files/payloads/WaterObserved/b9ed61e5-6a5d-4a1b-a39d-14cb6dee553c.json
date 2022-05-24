@@ -1,0 +1,17 @@
+{
+  "Id": "b9ed61e5-6a5d-4a1b-a39d-14cb6dee553c",
+  "Type": "WaterObserved",
+  "Source": "UrlToEden",
+  "DateCreated": null,
+  "DateObserved": "2019-05-20T14:05:00",
+  "Flow": 0,
+  "Height": 34.56,
+  "DischargeAmount": 0,
+  "Location": {
+    "_type": "Point",
+    "_coordinates": [
+      48.90467,
+      2.19208
+    ]
+  }
+}
