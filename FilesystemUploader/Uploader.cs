@@ -5,6 +5,8 @@ namespace FilesystemUploader;
 
 public class Uploader
 {
+    private const string RiverFlowrateApi =
+        "https://hubeau.eaufrance.fr/api/v1/hydrometrie/observations_tr.csv?grandeur_hydro=Q";
     private readonly string _endpoint;
     private readonly string _authToken;
     
@@ -16,17 +18,37 @@ public class Uploader
         _authToken = authToken;
     }
 
-    public async Task PerformGetRequest()
+    public async Task PerformGetRequest(string requestId)
     {
         // just to validate that we can connect
         Client.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));
         Client.DefaultRequestHeaders.Add("X-Auth-Token", _authToken);
         
-        var retval = await Client.GetAsync(_endpoint + "1024e64a-0283-472c-9b62-dbf77291503e");
+        var retval = await Client.GetAsync(_endpoint + requestId);
         Console.WriteLine(retval);
     }
 
+    public async Task FetchHydrometryDataFromEden(List<string> extraProperties)
+    {
+        HttpResponseMessage retval;
+        if (!extraProperties.Any())
+        {
+            retval = await Client.GetAsync(RiverFlowrateApi);
+        }
+        else
+        {
+            var query = RiverFlowrateApi;
+            foreach (var prop in extraProperties)
+            {
+                query += "&" + prop;
+            }
+
+            retval = await Client.GetAsync(query);
+        }
+        
+        
+    }
 
     public async Task PerformPostRequest(string data)
     {

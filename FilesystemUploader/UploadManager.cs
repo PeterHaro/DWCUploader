@@ -53,7 +53,7 @@ public class UploadManager
             Console.WriteLine("The uploader has not been initalized correctly. Aborting");
             return;
         }
-        await _uploader.PerformGetRequest();
+        await _uploader.PerformGetRequest("1024e64a-0283-472c-9b62-dbf77291503e");
         Console.WriteLine("Done");
     }
 
