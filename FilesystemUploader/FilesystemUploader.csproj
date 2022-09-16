@@ -13,6 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Folder Include="files\eden_production" />
         <Folder Include="files\payloads\WaterObserved" />
         <Folder Include="test" />
     </ItemGroup>

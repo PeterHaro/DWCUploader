@@ -239,19 +239,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\crono\\.nuget\\packages\\": {}
+    "C:\\Users\\crono\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\prosjekter\\SINTEF\\DWC\\FilesystemUploader\\FilesystemUploader\\FilesystemUploader.csproj",
+      "projectUniqueName": "F:\\prosjekter\\SINTEF\\DWC\\FilesystemUploader\\FilesystemUploader\\FilesystemUploader.csproj",
       "projectName": "FilesystemUploader",
-      "projectPath": "D:\\prosjekter\\SINTEF\\DWC\\FilesystemUploader\\FilesystemUploader\\FilesystemUploader.csproj",
+      "projectPath": "F:\\prosjekter\\SINTEF\\DWC\\FilesystemUploader\\FilesystemUploader\\FilesystemUploader.csproj",
       "packagesPath": "C:\\Users\\crono\\.nuget\\packages\\",
-      "outputPath": "D:\\prosjekter\\SINTEF\\DWC\\FilesystemUploader\\FilesystemUploader\\obj\\",
+      "outputPath": "F:\\prosjekter\\SINTEF\\DWC\\FilesystemUploader\\FilesystemUploader\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
         "C:\\Users\\crono\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -259,6 +264,7 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -292,7 +298,8 @@
           "net47",
           "net471",
           "net472",
-          "net48"
+          "net48",
+          "net481"
         ],
         "assetTargetFallback": true,
         "warn": true,
@@ -301,7 +308,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.201\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.400-preview.22330.6\\RuntimeIdentifierGraph.json"
       }
     }
   }

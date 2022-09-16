@@ -44,8 +44,16 @@ public class UploadManager
             Console.WriteLine("Uploader should be intialized");
             _uploader = new Uploader(remoteFiwareEndpoint, fiwareAuthToken);
         }
+        
+        //Create backup folder
+        Directory.CreateDirectory(Path.GetDirectoryName(directoryToWatch + "/backup/"));
     }
 
+    public async Task AuthenticateWithRemote()
+    {
+        await _uploader.AuthenticateWithRemote();
+    }
+    
     public async Task TestConnectionToFiware()
     {
         if (_uploader == null)
@@ -53,7 +61,7 @@ public class UploadManager
             Console.WriteLine("The uploader has not been initalized correctly. Aborting");
             return;
         }
-        await _uploader.PerformGetRequest("1024e64a-0283-472c-9b62-dbf77291503e");
+        await _uploader.PerformGetRequest("v2/enteties");
         Console.WriteLine("Done");
     }
 
@@ -71,11 +79,11 @@ public class UploadManager
         Console.WriteLine("Done");
     }
     
-    public void BeginTheWatch()
+    public async void BeginTheWatch()
     {
         _isRunning = true;
         _fileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), _directoryToWatch));
-        WatchForFileChanges();
+        await WatchForFileChanges();
     }
 
     public void EndTheWatch()
@@ -122,8 +130,13 @@ public class UploadManager
     
     private async Task WatchForFileChanges()
     {
-        IEnumerable<string> files = Directory.EnumerateFiles(_directoryToWatch, "*.*", SearchOption.AllDirectories);
-        foreach (string file in files)
+        IEnumerable<string> files = Directory.EnumerateFiles(_directoryToWatch, "*.*", SearchOption.TopDirectoryOnly);
+        var enumerable = files.ToList();
+        foreach (var file in enumerable)
+        {
+            Console.WriteLine(file);
+        }
+        foreach (string file in enumerable)
         {
             if (_files.TryGetValue(file, out DateTime existingTime))
             {
@@ -140,7 +153,15 @@ public class UploadManager
                     Console.WriteLine($"Detected a new file {file}");
                     if (_uploader != null)
                     {
-                        await _uploader.PerformPostRequest(_transformer.TransformToWaterObservedInMemory(file));
+                        Console.WriteLine("Uploader is not null");
+                        //await _uploader.PerformPostRequest(_transformer.TransformToWaterObservedInMemory(file));
+                        //Copy file to backup
+                        File.Copy(file, _directoryToWatch+"/backup/"+Path.GetFileName(file));
+                        Console.WriteLine($"copied file to {_directoryToWatch+"/backup/"+Path.GetFileName(file)}");
+                        //Delete file
+                        File.Delete(file);
+                        Console.WriteLine($"Should have deleted file: {file}");
+                        
                     }
                     _files.TryAdd(file, File.GetLastWriteTime(file));
                 }

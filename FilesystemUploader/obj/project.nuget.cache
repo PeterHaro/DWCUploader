@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "VqbMnmdLS2uMesb4vwEDRo3rgKHKOvaioA4ISAoNB6hZgUh3Tp3SRJdXNITDjNE7RVMvuaAGcq5WUETDC7YIeA==",
+  "dgSpecHash": "5gY0OW2fR5h8PGsfhpBfQU64vfx0wndyk9U4FDRl8yYkfAetjqHvltUKtN2up2277zhCJrkPlAIwW/xTNsm2vw==",
   "success": true,
-  "projectFilePath": "D:\\prosjekter\\SINTEF\\DWC\\FilesystemUploader\\FilesystemUploader\\FilesystemUploader.csproj",
+  "projectFilePath": "F:\\prosjekter\\SINTEF\\DWC\\FilesystemUploader\\FilesystemUploader\\FilesystemUploader.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\crono\\.nuget\\packages\\microsoft.extensions.fileproviders.abstractions\\6.0.0\\microsoft.extensions.fileproviders.abstractions.6.0.0.nupkg.sha512",
     "C:\\Users\\crono\\.nuget\\packages\\microsoft.extensions.fileproviders.physical\\6.0.0\\microsoft.extensions.fileproviders.physical.6.0.0.nupkg.sha512",
