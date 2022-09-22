@@ -136,13 +136,14 @@ public class UploadManager
         return retval;
     }
 
- /*   public async Task TestFinalModel(string inputFile)
+    public async Task TestFinalModel(string inputFile)
     {
-        var json = _transformer.TransformToFinalModel(inputFile);
+        var edenData = _transformer.TransformToFinalModel(inputFile);
+        var json = JsonSerializer.Serialize(edenData);
         await File.WriteAllTextAsync("final_model_test.json", json);
         Console.WriteLine(json);
     }
-    */
+    
     
     private async Task WatchForFileChanges()
     {

@@ -152,7 +152,7 @@ public class Transformer
                 flow = new Flow
                 {
                     type = "Number",
-                    value = double.Parse(value),
+                    value = double.Parse(value.Replace(",", ".")),
                     metadata = new object()
                 }
             };
