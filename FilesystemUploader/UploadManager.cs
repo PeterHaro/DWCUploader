@@ -116,7 +116,7 @@ public class UploadManager
 
     private async void DeserializeManagerState()
     {
-        var json = await File.ReadAllTextAsync(StateFileName);
+        var json = File.ReadAllText(StateFileName);
         _files = JsonSerializer.Deserialize<ConcurrentDictionary<string, DateTime>>(json) ?? new ConcurrentDictionary<string, DateTime>();
     }
     
@@ -139,9 +139,12 @@ public class UploadManager
     public async Task TestFinalModel(string inputFile)
     {
         var edenData = _transformer.TransformToFinalModel(inputFile);
-        var json = JsonSerializer.Serialize(edenData);
-        await File.WriteAllTextAsync("final_model_test.json", json);
-        Console.WriteLine(json);
+        //var json = JsonSerializer.Serialize(edenData);
+        //await File.WriteAllTextAsync("final_model_test.json", json);
+        foreach (var patchable in edenData)
+        {
+            await _fiwareUploader.PerformPatch(patchable);
+        }
     }
     
     

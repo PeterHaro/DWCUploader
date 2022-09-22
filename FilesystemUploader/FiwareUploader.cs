@@ -13,7 +13,7 @@ public class FiwareUploader
     private const string RiverFlowrateApi =
         "https://hubeau.eaufrance.fr/api/v1/hydrometrie/observations_tr.csv?grandeur_hydro=Q";
 
-    private const string EntitiesEndpoint = "/v2/entities/";
+    private const string EntitiesEndpoint = "v2/entities/";
     private readonly string _endpoint;
     private readonly string _authEndpoint;
     private readonly string _authToken;

@@ -167,3 +167,4 @@ F:\prosjekter\SINTEF\DWC\FilesystemUploader\FilesystemUploader\bin\Debug\net6.0\
 F:\prosjekter\SINTEF\DWC\FilesystemUploader\FilesystemUploader\bin\Debug\net6.0\files\eden_production\EDEN_DWC_20220916_134123.csv
 F:\prosjekter\SINTEF\DWC\FilesystemUploader\FilesystemUploader\bin\Debug\net6.0\files\eden_production\EDEN_DWC_20220916_134327.csv
 F:\prosjekter\SINTEF\DWC\FilesystemUploader\FilesystemUploader\bin\Debug\net6.0\files\eden_production\EDEN_DWC_20220916_134531.csv
+F:\prosjekter\SINTEF\DWC\FilesystemUploader\FilesystemUploader\bin\Debug\net6.0\files\eden_production\EDEN_DWC_20220922_105533.csv
