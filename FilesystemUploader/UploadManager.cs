@@ -18,7 +18,8 @@ public class UploadManager
     private PhysicalFileProvider? _fileProvider;
     private IChangeToken? _fileChangeToken;
     private bool _isRunning = false;
-    private Uploader _uploader = null;
+    //private Uploader _uploader = null;
+    private FiwareUploader _fiwareUploader;
     private Transformer _transformer = new Transformer();
 
     public UploadManager(string directoryToWatch = "./", string watchFilter = "**/*.*", string remoteFiwareEndpoint = "", string fiwareAuthToken="")
@@ -42,19 +43,26 @@ public class UploadManager
         if (!string.IsNullOrEmpty(remoteFiwareEndpoint) && !string.IsNullOrEmpty(fiwareAuthToken))
         {
             Console.WriteLine("Uploader should be intialized");
-            _uploader = new Uploader(remoteFiwareEndpoint, fiwareAuthToken);
+            //_uploader = new Uploader(remoteFiwareEndpoint, fiwareAuthToken);
+            _fiwareUploader = new FiwareUploader(remoteFiwareEndpoint);
         }
         
         //Create backup folder
         Directory.CreateDirectory(Path.GetDirectoryName(directoryToWatch + "/backup/"));
+        
+        //check if the state file exists, if not create an empty file
+        if(!File.Exists(StateFileName))
+        {
+            SerializeManagerState();
+        }
     }
 
     public async Task AuthenticateWithRemote()
     {
-        await _uploader.AuthenticateWithRemote();
+        await _fiwareUploader.AuthenticateWithRemote();
     }
     
-    public async Task TestConnectionToFiware()
+  /*  public async Task TestConnectionToFiware()
     {
         if (_uploader == null)
         {
@@ -63,9 +71,9 @@ public class UploadManager
         }
         await _uploader.PerformGetRequest("v2/enteties");
         Console.WriteLine("Done");
-    }
+    }*/
 
-    public async Task TestPostWaterObserved()
+  /*  public async Task TestPostWaterObserved()
     {
         if (_uploader == null)
         {
@@ -77,7 +85,7 @@ public class UploadManager
         var jsonRequest = _transformer.TransformToWaterObservedInMemory("./files/EDEN.csv");
         await _uploader.PerformPostRequest(jsonRequest);
         Console.WriteLine("Done");
-    }
+    }*/
     
     public async void BeginTheWatch()
     {
@@ -108,7 +116,7 @@ public class UploadManager
 
     private async void DeserializeManagerState()
     {
-        var json = File.ReadAllText(StateFileName);
+        var json = await File.ReadAllTextAsync(StateFileName);
         _files = JsonSerializer.Deserialize<ConcurrentDictionary<string, DateTime>>(json) ?? new ConcurrentDictionary<string, DateTime>();
     }
     
@@ -127,6 +135,14 @@ public class UploadManager
         
         return retval;
     }
+
+ /*   public async Task TestFinalModel(string inputFile)
+    {
+        var json = _transformer.TransformToFinalModel(inputFile);
+        await File.WriteAllTextAsync("final_model_test.json", json);
+        Console.WriteLine(json);
+    }
+    */
     
     private async Task WatchForFileChanges()
     {
@@ -151,10 +167,23 @@ public class UploadManager
                 if (File.Exists(file)) // New file added to system. I.E should post
                 {
                     Console.WriteLine($"Detected a new file {file}");
-                    if (_uploader != null)
+                    if (_fiwareUploader != null)
                     {
                         Console.WriteLine("Uploader is not null");
-                        //await _uploader.PerformPostRequest(_transformer.TransformToWaterObservedInMemory(file));
+                        
+                        // IGNORE OUR OWN GENERATED FILES
+                        if (Path.GetFileName(file).StartsWith("DWC_EDEN_"))
+                        {
+                            // IGnore this file
+                            Console.WriteLine("Found our heartbeat");
+                            continue;
+                        }
+                        
+                        var patches = (_transformer.TransformToFinalModel(file));
+                        foreach (var patchable in patches)
+                        {
+                            await _fiwareUploader.PerformPatch(patchable);
+                        }
                         //Copy file to backup
                         File.Copy(file, _directoryToWatch+"/backup/"+Path.GetFileName(file));
                         Console.WriteLine($"copied file to {_directoryToWatch+"/backup/"+Path.GetFileName(file)}");

@@ -9,6 +9,7 @@ namespace FilesystemUploader;
 
 public class Transformer
 {
+    private static string WaterObservedUrn = "urn:ngsi-ld:WaterObserved:";
     private const string WaterObserved = "WaterObserved";
     private const string UrlToEden = nameof(UrlToEden);
 
@@ -98,6 +99,68 @@ public class Transformer
         }
     }
 
+    public List<WaterObservedEden> TransformToFinalModel(string csvInput)
+    {
+        using TextFieldParser parser = new TextFieldParser(csvInput);
+        parser.TextFieldType = FieldType.Delimited;
+        parser.SetDelimiters(";");
+        List<WaterObservedEden> edenData = new List<WaterObservedEden>();
+        while (!parser.EndOfData)
+        {
+            string[]? fields = parser.ReadFields();
+            var id = "";
+            DateTime datetime = default;
+            var value = "";
+            var flowRate = "";
+            if (fields[0].StartsWith("WaterObserved"))
+            {
+                // TODO: TURN INTO FUNCTION
+                //TRANSFORM TO WATER OBSERVED
+                id = $"{fields[0].Substring(fields[0].IndexOf(':') + 1)}";
+                datetime = Convert.ToDateTime(fields[1]);
+                value = fields[2];
+                flowRate = fields[3];
+            }
+            else
+            {
+                Console.WriteLine("WARNING WARNING WARNING!");
+                Console.WriteLine("=========================");
+                Console.WriteLine("¨                        ");
+                Console.WriteLine("Unknown datatype uploaded to the SFTP repository");
+                Console.WriteLine("Unknown datatype uploaded to the SFTP repository");
+                Console.WriteLine("Unknown datatype uploaded to the SFTP repository");
+                Console.WriteLine("¨                        ");
+                Console.WriteLine("=========================");
+                Console.WriteLine("WARNING WARNING WARNING!");
+            }
+
+            if (flowRate.Equals("1"))
+            {
+                
+            }
+
+            WaterObservedEden waterObservedEden = new WaterObservedEden
+            {
+                id = id,
+                type = "WaterObserved",
+                dateObserved = new DateObserved
+                {
+                    type = "DateTime",
+                    value = datetime.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                    metadata = new object()
+                },
+                flow = new Flow
+                {
+                    type = "Number",
+                    value = double.Parse(value),
+                    metadata = new object()
+                }
+            };
+            edenData.Add(waterObservedEden);
+        }
+        return edenData;
+    }
+    
     public string TransformToWaterObservedInMemory(string csvInput)
     {
         List<WaterObserved> waterObservedData = new List<WaterObserved>();

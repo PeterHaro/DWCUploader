@@ -14,13 +14,14 @@ public class Uploader
     private readonly string _endpoint;
     private readonly string _authEndpoint;
     private readonly string _authToken;
+    private AuthResponse _authResponse;
     private bool _isAuthenticated = false;
     private string _username;
     private string _password;
 
     private static readonly HttpClient Client = new HttpClient();
 
-    public Uploader(string endpoint, string authToken, string username = "siaap@dwc.fr", string password = "siaap")
+    public Uploader(string endpoint, string authToken = "Basic Mjk3MWM3NTMtODJhZS00YjVlLTkwN2YtOTdjNThlZGMyMzUxOjIzOWE5YjFmLTJkMzUtNDk1ZC1hNDQ4LWIwNmFkZjFjNTg5Yw==", string username = "siaap@dwc.fr", string password = "siaap")
     {
         _endpoint = endpoint;
         _authEndpoint = "https://k-rock.xyz/oauth2/token";
@@ -45,17 +46,19 @@ public class Uploader
         Client.DefaultRequestHeaders.Clear();
         Client.DefaultRequestHeaders.Add("Accept", "application/json");
         Client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", "Basic Mjk3MWM3NTMtODJhZS00YjVlLTkwN2YtOTdjNThlZGMyMzUxOjIzOWE5YjFmLTJkMzUtNDk1ZC1hNDQ4LWIwNmFkZjFjNTg5Yw==");
-       // Client.DefaultRequestHeaders.Add("Content-Type", "application/x-www-form-urlencoded");
-        var requestString = $"username: {_username}, password: {_password}, grant_type: password";
-        AuthData authData = new AuthData();
-        authData.username = _username;
-        authData.password = _password;
-        authData.grant_type = "password";
+        AuthData authData = new AuthData
+        {
+            username = _username,
+            password = _password,
+            grant_type = "password"
+        };
         var req = JsonSerializer.Serialize(authData);
         var requestContent = new StringContent(req, Encoding.UTF8, "application/x-www-form-urlencoded");
         var response = await Client.PostAsync(_authEndpoint, requestContent);
         var content = await response.Content.ReadAsStringAsync();
         Console.WriteLine(content);
+        //_authResponse = new AuthResponse();
+        //_authResponse.AccessToken = content[""]
     }
 
     public async Task UploadDataToFiware()
