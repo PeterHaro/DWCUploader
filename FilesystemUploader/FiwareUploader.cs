@@ -22,11 +22,11 @@ public class FiwareUploader
     private string _username;
     private string _password;
     
-    private static readonly SemaphoreSlim AccessTokenSemaphore;
+    private static SemaphoreSlim AccessTokenSemaphore;
     private static readonly HttpClient Client = new HttpClient();
 
 
-    public FiwareUploader(string endpoint, string authToken="Basic Mjk3MWM3NTMtODJhZS00YjVlLTkwN2YtOTdjNThlZGMyMzUxOjIzOWE5YjFmLTJkMzUtNDk1ZC1hNDQ4LWIwNmFkZjFjNTg5Yw==", string username = "siaap@dwc.fr",
+    public FiwareUploader(string endpoint, string authToken="Mjk3MWM3NTMtODJhZS00YjVlLTkwN2YtOTdjNThlZGMyMzUxOjIzOWE5YjFmLTJkMzUtNDk1ZC1hNDQ4LWIwNmFkZjFjNTg5Yw==", string username = "siaap@dwc.fr",
         string password = "siaap")
     {
         _endpoint = endpoint;
@@ -34,6 +34,7 @@ public class FiwareUploader
         _authToken = authToken;
         _username = username;
         _password = password;
+        AccessTokenSemaphore = new SemaphoreSlim(1, 1);
     }
 
     public async Task<WolfgangWaterObserved?> PerformGet(string requestId)
@@ -95,11 +96,16 @@ public class FiwareUploader
             {
                 Content = new FormUrlEncodedContent(new KeyValuePair<string?, string?>[]
                 {
-                    new("Accept", "application/json"),
-                    new("Authorization", _authToken),
+                    new("username", $"{_username}"),
+                    new("password", _password),
+                    new("grant_type", "password")
                 
                 })
             };
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            request.Headers.Authorization = new AuthenticationHeaderValue("Basic", _authToken);
+            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+            
         
             using var response = await Client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
             response.EnsureSuccessStatusCode();

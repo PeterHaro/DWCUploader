@@ -26,7 +26,9 @@ timer.Start();
 //await manager.TestConnectionToFiware();
 //await manager.TestPostWaterObserved();
 
-manager.BeginTheWatch();
+await manager.AuthenticateWithRemote();
+
+//manager.BeginTheWatch();
 Console.ReadKey(false);
 
 
