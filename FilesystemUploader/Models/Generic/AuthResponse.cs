@@ -1,4 +1,6 @@
-﻿namespace FilesystemUploader.Models.Generic;
+﻿using System.Text.Json.Serialization;
+
+namespace FilesystemUploader.Models.Generic;
 
 public class AuthResponse
 {
@@ -6,8 +8,11 @@ public class AuthResponse
     private static readonly TimeSpan Treshold = new(0, 5, 0);
     private int _expiresIn;
 
+    [JsonPropertyName("access_token")]
     public string AccessToken { get; set; }
+    [JsonPropertyName("token_type")]
     public string TokenType { get; set; }
+    [JsonPropertyName("expires_in")]
     public DateTime Expires { get; set; }
     public int ExpiresIn
     {
@@ -19,7 +24,9 @@ public class AuthResponse
         } 
     }
 
+    [JsonPropertyName("refresh_token")]
     public string RefreshToken { get; set; }
+    [JsonPropertyName("scope")]
     public string Scope { get; set; }
 
     public bool Expired => (Expires - DateTime.UtcNow).TotalSeconds <= Treshold.TotalSeconds;

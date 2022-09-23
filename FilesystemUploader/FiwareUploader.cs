@@ -1,7 +1,9 @@
 ﻿using System.Globalization;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using FilesystemUploader.Models;
 using FilesystemUploader.Models.Generic;
 
@@ -42,8 +44,9 @@ public class FiwareUploader
         var accessToken = await GetAccessToken();
         Client.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));
-        Client.DefaultRequestHeaders.Add("X-Auth-Token", accessToken.AccessToken);
-        var retval = await Client.GetAsync(_endpoint + requestId);
+        Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken.AccessToken);
+        var retval = await Client.GetAsync(_endpoint  + EntitiesEndpoint + requestId);
+        retval.EnsureSuccessStatusCode();
         await using var responseContentStream = await retval.Content.ReadAsStreamAsync();
         return await JsonSerializer.DeserializeAsync<WolfgangWaterObserved>(responseContentStream);
     }
@@ -56,16 +59,19 @@ public class FiwareUploader
 
         WaterObservedPatchRequest patchRequest = new WaterObservedPatchRequest
         {
-            dateObserved = entity.GetDateField(),
-            flow = entity.GetFlowValue().ToString(CultureInfo.InvariantCulture)
+            dateObserved = entity.dateObserved,
+            flow = entity.flow
         };
-        request.Content = new StringContent(patchRequest.GenerateRequstString());
+        var jeiiiison = JsonSerializer.Serialize(patchRequest);
+        Console.WriteLine(jeiiiison);
+        request.Content = new StringContent(jeiiiison, Encoding.UTF8, "application/json");
+        request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
         using var response = await Client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
         response.EnsureSuccessStatusCode();
         await using var responseContentStream = await response.Content.ReadAsStreamAsync();
         
         var validation = await PerformGet(entity.id);
-        if (Math.Abs(validation!.flow.value - entity.flow.value) < 0.01 && validation.dateObserved.value.Equals(entity.dateObserved.value))
+        if (Math.Abs(validation!.flow.value - entity.flow.value) < 0.01)
         {
             Console.WriteLine($"Successfull patch for entity with id: {entity.id}");
         }
@@ -110,7 +116,20 @@ public class FiwareUploader
             using var response = await Client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
             response.EnsureSuccessStatusCode();
             await using var responseContentStream = await response.Content.ReadAsStreamAsync();
-            var authenticationResponse = await JsonSerializer.DeserializeAsync<AuthResponse>(responseContentStream);
+            StreamReader reader = new StreamReader(responseContentStream);
+            var help = await reader.ReadToEndAsync();
+            
+            //For some reason this does not work!
+            //var authenticationResponse = await JsonSerializer.DeserializeAsync<AuthResponse>(responseContentStream);
+            JsonObject? jsonObject = JsonSerializer.Deserialize<JsonObject>(help);
+            AuthResponse authenticationResponse = new AuthResponse
+            {
+                AccessToken = (string)jsonObject["access_token"]!,
+                TokenType = (string)jsonObject["token_type"]!,
+                ExpiresIn = (int)jsonObject["expires_in"]!,
+                RefreshToken = (string)jsonObject["refresh_token"]!
+            };
+
             return authenticationResponse ??
                    throw new Exception("Failed to deserialize authentication data from the Fiware instance");
         }

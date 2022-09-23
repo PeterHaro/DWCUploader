@@ -13,6 +13,7 @@ string backupDirectory = "/backup";
 //__END_TEST_
 // ADD ENDPOINT
 // ADD AUTH TOKEN BEFORE TESTING
+Console.WriteLine($"I am watching: {Path.GetFullPath(directoryToWatch)}");
 UploadManager manager = new UploadManager(directoryToWatch, "**/*.*","https://c-broker.xyz/", "Bearer 06ce3ad0dcf97b09ef02c2d1cf009857cfcaf1b1");
 System.Timers.Timer timer = new System.Timers.Timer(60000);
 timer.Elapsed += SendHeartbeatToEden!;
@@ -26,7 +27,7 @@ timer.Start();
 //await manager.TestPostWaterObserved();
 
 //await manager.AuthenticateWithRemote();
-await manager.TestFinalModel("files/eden_production/EDEN_DWC_20220922_105533.csv");
+//await manager.TestFinalModel("files/eden_production/EDEN_DWC_20220922_105533.csv");
 
 
 

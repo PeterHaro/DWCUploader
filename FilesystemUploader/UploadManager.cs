@@ -173,8 +173,6 @@ public class UploadManager
                     Console.WriteLine($"Detected a new file {file}");
                     if (_fiwareUploader != null)
                     {
-                        Console.WriteLine("Uploader is not null");
-                        
                         // IGNORE OUR OWN GENERATED FILES
                         if (Path.GetFileName(file).StartsWith("DWC_EDEN_"))
                         {

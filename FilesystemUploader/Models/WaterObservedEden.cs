@@ -7,7 +7,7 @@ public class WaterObservedEden
     public string id
     {
         get => _id;
-        set => _id = "urn:ngsi-ld:ld:WaterObserved" +  value;
+        set => _id = "urn:ngsi-ld:WaterObserved:" +  value;
     }
     public string type { get; set; }
     public DateObserved dateObserved { get; set; } //Name [sic] for interoperability

@@ -102,6 +102,8 @@ public class Transformer
     public List<WaterObservedEden> TransformToFinalModel(string csvInput)
     {
         using TextFieldParser parser = new TextFieldParser(csvInput);
+        var fileContents = File.ReadAllText(csvInput);
+        Console.WriteLine($"CSV File data is: \n{fileContents}");
         parser.TextFieldType = FieldType.Delimited;
         parser.SetDelimiters(";");
         List<WaterObservedEden> edenData = new List<WaterObservedEden>();
@@ -146,7 +148,7 @@ public class Transformer
                 dateObserved = new DateObserved
                 {
                     type = "DateTime",
-                    value = datetime.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                    value = datetime.ToString("yyyy-MM-ddTHH:mm:ss.Z"),
                     metadata = new object()
                 },
                 flow = new Flow
